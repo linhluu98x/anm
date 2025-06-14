@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An Ninh Mạng: Thách Thức & Giải Pháp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        .nav-link { transition: background-color 0.3s ease, color 0.3s ease; }
+        .nav-link.active { background-color: #2563eb; color: white; border-radius: 0.5rem; }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 320px; max-height: 400px; }
+        @media (min-width: 640px) { .chart-container { height: 350px; max-height: 450px; } }
+        @media (min-width: 1024px) { .chart-container { height: 380px; max-height: 500px; } }
+
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .tab-button.active { border-color: #2563eb; background-color: #2563eb; color: white; }
+        .collapsible-header { cursor: pointer; }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s ease-out; opacity: 0; }
+        .collapsible-content.open { max-height: 1000px; opacity: 1; }
+        .tab-content { opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .tab-content.active-fade { opacity: 1; } /* New class for fade-in */
+
+        .hamburger-menu { display: none; }
+        @media (max-width: 1023px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .hamburger-menu { display: block; }
+        }
+        /* Fallback font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700">
+
+    <header class="lg:hidden bg-white shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 w-full z-50">
+        <h1 class="text-xl font-bold text-blue-700">An Ninh Mạng</h1>
+        <button id="mobile-menu-button" class="text-slate-600 hover:text-blue-600 focus:outline-none">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+    </header>
+
+    <div id="mobile-nav-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden lg:hidden">
+        <nav class="bg-white w-64 h-full p-6 shadow-xl relative">
+            <button id="close-mobile-menu" class="absolute top-4 right-4 text-slate-600 hover:text-blue-600 focus:outline-none">
+                <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="text-2xl font-bold text-blue-700 mb-8 mt-4">Menu</h2>
+            <ul class="space-y-3">
+                <li><a href="#gioi-thieu" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Giới Thiệu</a></li>
+                <li><a href="#tong-quan" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Tổng Quan</a></li>
+                <li><a href="#tam-quan-trong" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Tầm Quan Trọng</a></li>
+                <li><a href="#rui-ro" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Các Loại Rủi Ro</a></li>
+                <li><a href="#xu-huong-moi" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Xu Hướng Mới</a></li>
+                <li><a href="#hau-qua" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Hậu Quả</a></li>
+                <li><a href="#bien-phap" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Biện Pháp</a></li>
+                <li><a href="#vai-tro" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Vai Trò</a></li>
+                <li><a href="#ket-luan" class="block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Kết Luận</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="flex">
+        <aside class="sidebar w-64 bg-white shadow-lg h-screen fixed top-0 left-0 p-6 hidden lg:block">
+            <h2 class="text-2xl font-bold text-blue-700 mb-8">An Ninh Mạng</h2>
+            <nav>
+                <ul class="space-y-3">
+                    <li><a href="#gioi-thieu" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Giới Thiệu</a></li>
+                    <li><a href="#tong-quan" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Tổng Quan</a></li>
+                    <li><a href="#tam-quan-trong" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Tầm Quan Trọng</a></li>
+                    <li><a href="#rui-ro" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Các Loại Rủi Ro</a></li>
+                    <li><a href="#xu-huong-moi" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Xu Hướng Mới</a></li>
+                    <li><a href="#hau-qua" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Hậu Quả</a></li>
+                    <li><a href="#bien-phap" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Biện Pháp</a></li>
+                    <li><a href="#vai-tro" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Vai Trò</a></li>
+                    <li><a href="#ket-luan" class="nav-link block py-2 px-4 text-slate-700 hover:bg-slate-100 rounded-md text-base font-medium">Kết Luận</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">
+
+            <section id="gioi-thieu" class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl shadow-lg p-8 sm:p-10 lg:p-12 mb-12 flex flex-col items-center text-center">
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">Khi An Ninh Mạng Không Còn Là Lựa Chọn...</h2>
+                <p class="text-xl sm:text-2xl font-light mb-6 opacity-90">Nó Là Nền Tảng Sống Còn Cho Mọi Tổ Chức và Quốc Gia Trong Kỷ Nguyên Số.</p>
+                <p class="text-lg sm:text-xl max-w-4xl opacity-80">
+                    Thế giới đang số hóa chóng mặt, và cùng với đó là vô vàn mối đe dọa ẩn mình trong không gian mạng. Từ những vụ tấn công tống tiền gây chấn động đến việc rò rỉ dữ liệu chấn động, an ninh mạng chưa bao giờ quan trọng đến thế. Trang web này sẽ cung cấp cái nhìn toàn diện về những rủi ro đang rình rập, những hậu quả tiềm ẩn và quan trọng hơn cả: **những giải pháp hiệu quả để chúng ta cùng nhau xây dựng một lá chắn vững chắc cho tương lai số.**
+                </p>
+            </section>
+
+            <section id="tong-quan" class="py-8 sm:py-10 bg-white rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Bức Tranh Tổng Thể về An Ninh Mạng</h2>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    Trong bối cảnh an ninh mạng phức tạp, việc nắm bắt những điểm cốt lõi là bước đầu tiên để xây dựng phòng tuyến vững chắc. Hãy cùng điểm qua những số liệu và thông tin nổi bật nhất về các mối đe dọa và cách chúng ta đang đối phó.
+                </p>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card p-6 text-center bg-blue-50">
+                        <div class="text-5xl mb-3 text-blue-600">6</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Đe Dọa Chủ Lực</h3>
+                        <p class="text-sm text-slate-600">Những mối nguy hiểm hàng đầu mà mọi hệ thống phải đối mặt, đòi hỏi sự cảnh giác tối đa.</p>
+                    </div>
+                    <div class="card p-6 text-center bg-green-50">
+                        <div class="text-5xl mb-3 text-green-600">4</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Xu Hướng Bất Ổn</h3>
+                        <p class="text-sm text-slate-600">Các mối đe dọa mới nổi và ngày càng tinh vi, định hình lại cuộc chiến an ninh mạng.</p>
+                    </div>
+                    <div class="card p-6 text-center bg-red-50">
+                        <div class="text-5xl mb-3 text-red-600">5</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Hậu Quả Cay Đắng</h3>
+                        <p class="text-sm text-slate-600">Những thiệt hại sâu rộng và lâu dài khi phòng thủ thất bại.</p>
+                    </div>
+                    <div class="card p-6 text-center bg-purple-50">
+                        <div class="text-5xl mb-3 text-purple-600">8</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Giải Pháp Toàn Diện</h3>
+                        <p class="text-sm text-slate-600">Các chiến lược và công nghệ giúp xây dựng lá chắn vững chắc cho tương lai số.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tam-quan-trong" class="py-12 sm:py-16 bg-white rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">An Ninh Mạng: Nền Tảng Quyết Định Tương Lai</h2>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    Trong một thế giới nơi dữ liệu là vàng và kết nối là huyết mạch, an ninh mạng không còn là một lựa chọn mà là một yêu cầu bắt buộc. Đây là lá chắn vô hình bảo vệ sự thịnh vượng, ổn định và niềm tin trong kỷ nguyên số.
+                </p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-4">🏢 Bảo Vệ Tổ Chức - Duy Trì Thịnh Vượng</h3>
+                        <p class="text-base text-slate-600 mb-4">Mỗi doanh nghiệp, từ start-up nhỏ đến tập đoàn đa quốc gia, đều đối mặt với rủi ro tấn công mạng. Một cuộc tấn công thành công có thể xóa sổ hàng tỷ USD, phá hủy uy tín và làm tê liệt hoạt động. An ninh mạng giúp chúng ta:</p>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">🔒</span>Bảo vệ **tài sản trí tuệ và dữ liệu nhạy cảm**, bí mật kinh doanh.</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">⏳</span>Đảm bảo **hoạt động kinh doanh liên tục**, tránh gián đoạn sản xuất, dịch vụ.</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">💰</span>Ngăn chặn **tổn thất tài chính khổng lồ** do gian lận, phục hồi hệ thống.</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">🤝</span>Củng cố **uy tín và lòng tin** của khách hàng, đối tác.</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">⚖️</span>Đảm bảo **tuân thủ quy định pháp luật** về bảo mật dữ liệu.</li>
+                        </ul>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-4">🏛️ Bảo Vệ Quốc Gia - Giữ Vững Chủ Quyền Số</h3>
+                        <p class="text-base text-slate-600 mb-4">Đối với chính phủ, an ninh mạng là vấn đề an ninh quốc gia. Các cuộc tấn công có thể nhắm vào cơ sở hạ tầng trọng yếu, làm suy yếu khả năng phòng thủ và gây mất ổn định xã hội. Vì vậy, chúng ta cần:</p>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">🛡️</span>Bảo vệ **cơ sở hạ tầng quan trọng quốc gia** (điện, nước, viễn thông, giao thông).</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">🌐</span>Đảm bảo **an ninh quốc gia và chủ quyền số** trên không gian mạng.</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">👤</span>Bảo vệ **thông tin cá nhân và quyền riêng tư** của công dân.</li>
+                            <li class="flex items-start"><span class="mr-2 text-blue-500">🤝</span>Duy trì **trật tự xã hội và lòng tin công chúng** vào hệ thống nhà nước.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="rui-ro" class="py-12 sm:py-16 bg-slate-100 rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Giải Mã Các Đe Dọa Phổ Biến Nhất</h2>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    Để xây dựng một pháo đài vững chắc, trước hết chúng ta phải hiểu rõ về kẻ thù. Hãy cùng khám phá những loại hình tấn công mạng phổ biến nhất đang nhắm vào hệ thống và dữ liệu của chúng ta. Việc nhận diện chính xác là bước đầu tiên để phòng thủ hiệu quả.
+                </p>
+                <div>
+                    <div class="mb-6 border-b border-slate-200">
+                        <nav class="-mb-px flex flex-wrap justify-center gap-2 sm:gap-4" aria-label="Tabs" id="risk-tabs">
+                            <button data-tab="malware" class="tab-button active whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors duration-200">
+                                Phần mềm độc hại
+                            </button>
+                            <button data-tab="phishing" class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors duration-200">
+                                Lừa đảo
+                            </button>
+                            <button data-tab="ddos" class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors duration-200">
+                                Từ chối dịch vụ (DDoS)
+                            </button>
+                            <button data-tab="hacking" class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors duration-200">
+                                Xâm nhập trái phép
+                            </button>
+                             <button data-tab="insider" class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors duration-200">
+                                Rủi ro nội bộ
+                            </button>
+                             <button data-tab="vulnerability" class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors duration-200">
+                                Lỗ hổng hệ thống
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div id="malwareContent" class="tab-content card p-6">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h3 class="text-2xl font-semibold text-sky-600 mb-3">Phần mềm độc hại (Malware): Kẻ thù thầm lặng</h3>
+                                <p class="text-slate-600 mb-2">Đây là một thuật ngữ rộng chỉ các phần mềm được tạo ra với mục đích gây hại cho hệ thống máy tính hoặc đánh cắp dữ liệu. Chúng bao gồm các biến thể nguy hiểm như **Virus, Worm, Trojan, Ransomware và Spyware**.</p>
+                                <p class="text-slate-600"><strong class="font-medium">Hậu quả:</strong> Mất dữ liệu vĩnh viễn, gián đoạn hoạt động kinh doanh nghiêm trọng, đánh cắp thông tin nhạy cảm, và đặc biệt là bị tống tiền khiến doanh nghiệp khốn đốn.</p>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="malwareChart"></canvas>
+                                <p class="text-center text-sm text-slate-500 mt-2">Biểu đồ minh họa phân bố các loại phần mềm độc hại phổ biến.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="phishingContent" class="tab-content hidden card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-3">Lừa đảo (Phishing): Nghệ thuật đánh lừa lòng tin</h3>
+                        <p class="text-slate-600 mb-2">Kẻ tấn công giả mạo các tổ chức hoặc cá nhân uy tín qua email, tin nhắn hoặc trang web để lừa nạn nhân tiết lộ thông tin cá nhân hoặc tài chính.</p>
+                        <p class="text-slate-600"><strong class="font-medium">Hậu quả:</strong> Đánh cắp thông tin đăng nhập, chiếm đoạt tài khoản ngân hàng, thông tin thẻ tín dụng, hoặc thậm chí là mã độc có thể được cài đặt thông qua các liên kết độc hại.</p>
+                    </div>
+                    <div id="ddosContent" class="tab-content hidden card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-3">Từ chối dịch vụ (DDoS): Khi dịch vụ bị "tấn công" bằng lưu lượng</h3>
+                        <p class="text-slate-600 mb-2">Kẻ tấn công làm quá tải máy chủ, hệ thống hoặc mạng lưới bằng cách gửi một lượng lớn lưu lượng truy cập giả mạo, khiến dịch vụ hợp pháp không thể hoạt động được.</p>
+                        <p class="text-slate-600"><strong class="font-medium">Hậu quả:</strong> Ngừng trệ dịch vụ hoàn toàn, gây thiệt hại doanh thu khổng lồ, mất uy tín trầm trọng và ảnh hưởng đến niềm tin của khách hàng.</p>
+                    </div>
+                     <div id="hackingContent" class="tab-content hidden card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-3">Xâm nhập trái phép (Hacking): Vượt qua rào cản phòng thủ</h3>
+                        <p class="text-slate-600 mb-2">Đây là hành vi lợi dụng các lỗ hổng bảo mật hoặc điểm yếu trong hệ thống để truy cập trái phép vào mạng lưới, máy tính, hoặc dữ liệu.</p>
+                        <p class="text-slate-600"><strong class="font-medium">Hậu quả:</strong> Đánh cắp, thay đổi hoặc phá hủy dữ liệu, cài đặt phần mềm độc hại, hoặc sử dụng hệ thống bị chiếm quyền để thực hiện các cuộc tấn công khác.</p>
+                    </div>
+                    <div id="insiderContent" class="tab-content hidden card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-3">Rủi ro từ bên trong (Insider Threats): Mối nguy tiềm ẩn từ chính nội bộ</h3>
+                        <p class="text-slate-600 mb-2">Đây là mối đe dọa đến từ những người có quyền truy cập hợp pháp vào hệ thống của tổ chức (như nhân viên hiện tại, cựu nhân viên, đối tác). Hành vi có thể là cố ý hoặc vô ý.</p>
+                        <p class="text-slate-600"><strong class="font-medium">Hậu quả:</strong> Rò rỉ thông tin mật, phá hoại hệ thống, hoặc cài đặt cửa hậu cho kẻ tấn công bên ngoài.</p>
+                    </div>
+                    <div id="vulnerabilityContent" class="tab-content hidden card p-6">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-3">Lỗ hổng phần mềm và hệ thống: Điểm yếu chí mạng</h3>
+                        <p class="text-slate-600 mb-2">Là những lỗi trong quá trình thiết kế, phát triển hoặc cấu hình phần mềm và hệ thống, tạo ra "cửa ngõ" cho kẻ tấn công khai thác.</p>
+                        <p class="text-slate-600"><strong class="font-medium">Hậu quả:</strong> Kẻ tấn công có thể dễ dàng xâm nhập, chiếm quyền kiểm soát hệ thống, đánh cắp dữ liệu hoặc cài đặt mã độc mà không bị phát hiện.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="xu-huong-moi" class="py-12 sm:py-16 bg-white rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Địa Hạt Nguy Hiểm Mới: Xu Hướng Rủi Ro Thay Đổi</h2>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    Thế giới an ninh mạng không ngừng biến đổi với tốc độ chóng mặt. Các mối đe dọa ngày càng tinh vi và đa dạng, đòi hỏi chúng ta phải luôn cập nhật và chuẩn bị sẵn sàng. Dưới đây là những xu hướng rủi ro đang định hình lại bức tranh an ninh mạng toàn cầu.
+                </p>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card p-6 text-center bg-blue-50">
+                        <div class="text-4xl mb-3 text-blue-600">🔗</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Tấn công chuỗi cung ứng</h3>
+                        <p class="text-sm text-slate-600">Nhắm vào các nhà cung cấp hoặc đối tác có khả năng phòng thủ yếu hơn để tìm đường tiếp cận mục tiêu chính. Một lỗ hổng nhỏ có thể mở ra cánh cửa cho thảm họa lớn.</p>
+                    </div>
+                    <div class="card p-6 text-center bg-green-50">
+                        <div class="text-4xl mb-3 text-green-600">💡</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Tấn công vào IoT</h3>
+                        <p class="text-sm text-slate-600">Với hàng tỷ thiết bị kết nối (Internet of Things) từ nhà thông minh đến nhà máy tự động, mỗi thiết bị là một điểm yếu tiềm tàng, dễ bị lợi dụng để tấn công vào mạng lưới lớn hơn.</p>
+                    </div>
+                    <div class="card p-6 text-center bg-purple-50">
+                        <div class="text-4xl mb-3 text-purple-600">🤖</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Sử dụng AI trong tấn công</h3>
+                        <p class="text-sm text-slate-600">Kẻ xấu lợi dụng trí tuệ nhân tạo và học máy để tự động hóa, tăng tốc độ và mức độ tinh vi của các cuộc tấn công, khiến việc phát hiện trở nên khó khăn hơn bao giờ hết.</p>
+                    </div>
+                    <div class="card p-6 text-center bg-red-50">
+                        <div class="text-4xl mb-3 text-red-600">🎯</div>
+                        <h3 class="text-xl font-semibold text-sky-600 mb-2">Tấn công dai dẳng nâng cao (APTs)</h3>
+                        <p class="text-sm text-slate-600">Đây là các chiến dịch tấn công có chủ đích, được lên kế hoạch kỹ lưỡng, kéo dài và rất khó phát hiện, thường nhắm vào các mục tiêu giá trị cao như chính phủ hay tập đoàn lớn.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="hau-qua" class="py-12 sm:py-16 bg-slate-100 rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Khi Phòng Thủ Thất Bại: Những Hậu Quả Khủng Khiếp</h2>
+                 <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    Một cuộc tấn công mạng thành công không chỉ là một sự cố kỹ thuật; đó là một thảm họa toàn diện, gây ra những thiệt hại sâu rộng và lâu dài. Hãy cùng nhìn vào những hậu quả tiềm ẩn để thấy rõ mức độ nghiêm trọng của việc không chuẩn bị.
+                </p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-3 text-xl">💸</span>
+                                <div><strong class="font-medium text-slate-700">Thiệt hại tài chính:</strong> Chi phí khắc phục hệ thống, tiền chuộc (trong trường hợp ransomware), mất doanh thu do gián đoạn, và các khoản phạt pháp lý khổng lồ.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-3 text-xl">⚙️</span>
+                                <div><strong class="font-medium text-slate-700">Gián đoạn hoạt động:</strong> Ngừng trệ toàn bộ quy trình sản xuất, cung cấp dịch vụ, hoặc hoạt động hành chính, gây thiệt hại nghiêm trọng cho doanh nghiệp và cuộc sống hàng ngày.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-3 text-xl">📉</span>
+                                <div><strong class="font-medium text-slate-700">Mất uy tín & lòng tin:</strong> Hình ảnh của tổ chức bị ảnh hưởng nặng nề, lòng tin của khách hàng và đối tác sụt giảm, dẫn đến hậu quả kinh doanh lâu dài.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-3 text-xl">🔒</span>
+                               <div> <strong class="font-medium text-slate-700">Rò rỉ thông tin nhạy cảm:</strong> Dữ liệu cá nhân của khách hàng, bí mật kinh doanh, hoặc thông tin quốc gia bị lộ, dẫn đến các vụ kiện tụng, tống tiền và rủi ro an ninh nghiêm trọng.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-3 text-xl">⚖️</span>
+                                <div><strong class="font-medium text-slate-700">Hậu quả pháp lý & quy định:</strong> Các tổ chức phải đối mặt với các khoản phạt tiền khổng lồ, kiện tụng, và có thể bị thu hồi giấy phép kinh doanh do vi phạm các quy định về bảo mật dữ liệu.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                         <canvas id="consequencesChart"></canvas>
+                         <p class="text-center text-sm text-slate-500 mt-2">Biểu đồ thể hiện mức độ nghiêm trọng (trên thang 1-10) của các hậu quả khi an ninh mạng bị xâm phạm.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="bien-phap" class="py-12 sm:py-16 bg-white rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Xây Dựng Lá Chắn Thép: Biện Pháp Phòng Ngừa và Giảm Thiểu</h2>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    Trong cuộc chiến không ngừng nghỉ với tội phạm mạng, việc phòng ngừa luôn là yếu tố then chốt. Dưới đây là những chiến lược và giải pháp toàn diện mà mọi tổ chức và chính phủ cần triển khai để bảo vệ mình và cộng đồng khỏi những mối đe dọa ngày càng tinh vi.
+                </p>
+                <div class="space-y-6" id="collapsible-section-parent">
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">1. Xây dựng chiến lược an ninh mạng toàn diện: Bước đi đầu tiên</h3>
+                            <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Không chỉ là công nghệ, mà là một tầm nhìn chiến lược. Cần đánh giá rủi ro thường xuyên, thiết lập chính sách và quy trình rõ ràng, minh bạch về an ninh mạng từ cấp lãnh đạo đến từng nhân viên.</p>
+                        </div>
+                    </div>
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">2. Nâng cao nhận thức & đào tạo: Con người là tuyến phòng thủ đầu tiên</h3>
+                            <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Tội phạm mạng thường khai thác điểm yếu từ con người. Đào tạo thường xuyên cho toàn bộ nhân viên và người dùng về các mối đe dọa mới, cách nhận biết email lừa đảo, hành vi đáng ngờ và quy tắc bảo mật cơ bản là cực kỳ quan trọng.</p>
+                        </div>
+                    </div>
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">3. Triển khai giải pháp bảo mật kỹ thuật: Lá chắn công nghệ</h3>
+                             <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Đầu tư vào các công nghệ bảo mật tiên tiến là yếu tố sống còn. Bao gồm:</p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>**Tường lửa (Firewall) và Antivirus/Antimalware:** Các lớp bảo vệ cơ bản nhưng không thể thiếu.</li>
+                                <li>**Hệ thống phát hiện/ngăn chặn xâm nhập (IDS/IPS):** Giúp nhận diện và chặn đứng các hành vi tấn công bất thường.</li>
+                                <li>**Mã hóa dữ liệu (Encryption):** Bảo vệ thông tin nhạy cảm ngay cả khi bị đánh cắp.</li>
+                                <li>**Kiểm soát truy cập chặt chẽ & Xác thực đa yếu tố (MFA):** Đảm bảo chỉ người có quyền mới có thể truy cập, và mỗi lần truy cập được xác minh kỹ lưỡng.</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">4. Kiểm tra an ninh thường xuyên & Kiểm thử xâm nhập (Penetration Testing): Tìm lỗ hổng trước khi kẻ xấu làm</h3>
+                            <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p class="mb-2">Đây là quá trình chủ động tấn công mô phỏng vào hệ thống để phát hiện các lỗ hổng bảo mật trước khi kẻ xấu có thể khai thác. Quy trình thường bao gồm:</p>
+                            <ul class="list-decimal list-inside space-y-1 pl-4 mb-2">
+                                <li>**Thu thập thông tin:** Tìm hiểu sâu rộng về kiến trúc và hoạt động của hệ thống mục tiêu.</li>
+                                <li>**Quét lỗ hổng:** Sử dụng các công cụ tự động và thủ công để phát hiện điểm yếu.</li>
+                                <li>**Khai thác:** Cố gắng xâm nhập vào hệ thống thông qua các lỗ hổng tìm được, mô phỏng hành vi của hacker thực sự.</li>
+                                <li>**Phân tích & Báo cáo:** Ghi lại chi tiết các lỗ hổng, đánh giá mức độ nghiêm trọng và đề xuất giải pháp khắc phục cụ thể, ưu tiên.</li>
+                            </ul>
+                            <p class="mb-1"><strong>Lợi ích không thể phủ nhận:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 pl-4">
+                                <li>**Phát hiện điểm yếu ẩn:** Tìm ra những lỗ hổng mà các biện pháp bảo mật tự động khác có thể bỏ sót.</li>
+                                <li>**Đánh giá hiệu quả thực tế:** Kiểm chứng mức độ hiệu quả của các giải pháp bảo mật hiện có trong môi trường thực.</li>
+                                <li>**Nâng cao khả năng phòng thủ:** Cải thiện liên tục hệ thống phòng thủ, giảm thiểu rủi ro bị tấn công thành công.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">5. Xây dựng kế hoạch ứng phó sự cố: Chuẩn bị cho tình huống xấu nhất</h3>
+                             <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Không có hệ thống nào là bất khả xâm phạm. Một kế hoạch ứng phó sự cố rõ ràng, được diễn tập thường xuyên, giúp tổ chức phản ứng nhanh chóng, giảm thiểu thiệt hại và phục hồi hệ thống, dữ liệu một cách hiệu quả sau khi xảy ra tấn công.</p>
+                        </div>
+                    </div>
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">6. Chia sẻ thông tin & hợp tác: Sức mạnh của cộng đồng</h3>
+                             <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Kẻ tấn công không hoạt động đơn lẻ. Việc tăng cường chia sẻ thông tin về các mối đe dọa mới, các chiến thuật tấn công và giải pháp hiệu quả giữa các tổ chức, chính phủ và cộng đồng chuyên gia an ninh mạng sẽ tạo ra một mạng lưới phòng thủ vững mạnh hơn.</p>
+                        </div>
+                    </div>
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">7. Tuân thủ tiêu chuẩn & quy định: Nền tảng pháp lý và đạo đức</h3>
+                             <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Việc tuân thủ các tiêu chuẩn an ninh quốc tế như ISO 27001, các quy định bảo vệ dữ liệu (ví dụ GDPR) và luật pháp liên quan không chỉ giúp tránh các rủi ro pháp lý mà còn xây dựng lòng tin từ phía khách hàng và đối tác.</p>
+                        </div>
+                    </div>
+                    <div class="collapsible-container card p-4">
+                        <div class="collapsible-header flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-sky-600">8. Đầu tư vào công nghệ tiên tiến: Đi trước một bước</h3>
+                             <span class="arrow text-sky-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapsible-content mt-2 text-slate-600">
+                            <p>Không ngừng nghiên cứu và đầu tư vào các công nghệ bảo mật mới nổi như Trí tuệ nhân tạo (AI), Học máy (Machine Learning) để phát hiện và dự đoán các mối đe dọa, phân tích dữ liệu lớn (Big Data) và tận dụng thông tin tình báo về các mối đe dọa (Threat Intelligence) để nâng cao khả năng phòng thủ chủ động.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="vai-tro" class="py-12 sm:py-16 bg-slate-100 rounded-lg shadow-lg mb-12 p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Trách Nhiệm Chung: Vai Trò Của Tổ Chức và Chính Phủ</h2>
+                <p class="text-lg text-slate-600 mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+                    An ninh mạng không phải là cuộc chiến của riêng ai. Nó đòi hỏi sự chung tay, phối hợp nhịp nhàng giữa các tổ chức và chính phủ. Mỗi bên đều có vai trò và trách nhiệm riêng biệt, nhưng cùng chung một mục tiêu: bảo vệ không gian mạng an toàn cho tất cả mọi người.
+                </p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-6 bg-blue-50">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-4">🏢 Tổ Chức: Tiên phong bảo vệ</h3>
+                        <p class="text-base text-slate-600 mb-4">Doanh nghiệp và tổ chức là những người đầu tiên đối mặt với rủi ro. Họ cần chủ động:</p>
+                        <ul class="space-y-2 text-slate-600">
+                            <li>**Ưu tiên an ninh mạng** trong mọi chiến lược kinh doanh và hoạt động.</li>
+                            <li>**Phân bổ nguồn lực đầy đủ** (nhân sự chuyên môn, tài chính, công nghệ) cho công tác bảo mật.</li>
+                            <li>**Xây dựng văn hóa an ninh mạng** mạnh mẽ, nơi mọi nhân viên đều là một mắt xích bảo vệ.</li>
+                            <li>**Hợp tác chặt chẽ** với các chuyên gia, đối tác an ninh mạng bên ngoài và các cơ quan chức năng khi cần thiết.</li>
+                        </ul>
+                    </div>
+                    <div class="card p-6 bg-green-50">
+                        <h3 class="text-2xl font-semibold text-sky-600 mb-4">🌍 Chính Phủ: Kiến tạo môi trường an toàn</h3>
+                        <p class="text-base text-slate-600 mb-4">Chính phủ đóng vai trò kiến tạo và điều phối, đảm bảo một môi trường mạng an toàn ở cấp quốc gia và quốc tế:</p>
+                        <ul class="space-y-2 text-slate-600">
+                            <li>**Xây dựng và thực thi các chính sách, luật pháp** về an ninh mạng rõ ràng, phù hợp với bối cảnh mới.</li>
+                            <li>**Tăng cường hợp tác quốc tế** trong phòng chống tội phạm mạng xuyên biên giới và chia sẻ thông tin tình báo.</li>
+                            <li>**Hỗ trợ và tạo điều kiện** cho doanh nghiệp (đặc biệt là SME) nâng cao năng lực an ninh mạng.</li>
+                            <li>**Nâng cao nhận thức cộng đồng** về các rủi ro và biện pháp tự bảo vệ trên không gian mạng.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ket-luan" class="py-12 sm:py-16 bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-blue-700 mb-6 text-center">Kết Luận: Hướng Tới Một Tương Lai Số An Toàn</h2>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed text-center max-w-3xl mx-auto">
+                    An ninh mạng không chỉ là một thách thức kỹ thuật; đó là một cuộc đua không ngừng nghỉ với sự sáng tạo của kẻ tấn công. Chúng ta cần một sự cam kết liên tục, một tầm nhìn chiến lược và sự hợp tác không ngừng nghỉ để bảo vệ không gian mạng của mình.
+                </p>
+                <div class="text-center space-y-4 max-w-2xl mx-auto">
+                    <p class="text-slate-700">Hãy nhớ: An ninh mạng là một hành trình không ngừng nghỉ, đòi hỏi sự **chủ động, toàn diện và hợp tác** từ tất cả các bên liên quan.</p>
+                    <p class="text-slate-700">Đầu tư vào **con người** (đào tạo, nhận thức), **quy trình** (chính sách, ứng phó) và **công nghệ** (giải pháp bảo mật) là ba trụ cột vững chắc để chúng ta cùng nhau đứng vững trước mọi mối đe dọa.</p>
+                    <p class="mt-6 text-xl font-semibold text-blue-600">Hãy cùng nhau xây dựng một không gian mạng không chỉ thông minh hơn mà còn **an toàn và bền vững hơn** cho thế hệ hiện tại và tương lai!</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="bg-slate-800 text-slate-300 py-8 text-center lg:ml-64">
+        <p>&copy; <span id="currentYear"></span> Thông tin An Ninh Mạng. </p>
+        <p class="text-sm mt-1">Mọi thông tin chi tiết xin liên hệ: info@anninhmang.io</p>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileNavOverlay.classList.remove('hidden');
+        });
+
+        closeMobileMenuButton.addEventListener('click', () => {
+            mobileNavOverlay.classList.add('hidden');
+        });
+
+        document.querySelectorAll('#mobile-nav-overlay a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('hidden');
+            });
+        });
+
+        // Tab functionality using event delegation
+        const riskTabsNav = document.getElementById('risk-tabs');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        riskTabsNav.addEventListener('click', (event) => {
+            const button = event.target.closest('.tab-button');
+            if (!button) return;
+
+            const tabId = button.dataset.tab;
+
+            // Remove active classes from all buttons
+            riskTabsNav.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-600', 'text-white', 'bg-blue-600');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+
+            // Add active classes to clicked button
+            button.classList.add('active', 'border-blue-600', 'text-white', 'bg-blue-600');
+            button.classList.remove('text-slate-500');
+
+            // Hide all tab contents and remove fade class
+            tabContents.forEach(content => {
+                content.classList.remove('active-fade'); // Remove fade-in class immediately for smooth transition
+                content.classList.add('hidden');
+            });
+
+            // Show target tab content with fade-in
+            const targetContent = document.getElementById(`${tabId}Content`);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+                // Trigger reflow to ensure transition works
+                void targetContent.offsetWidth;
+                targetContent.classList.add('active-fade');
+            }
+        });
+        
+        // Initialize first tab as active on load
+        const initialTabButton = riskTabsNav.querySelector('.tab-button');
+        if (initialTabButton) {
+            initialTabButton.click();
+        }
+
+        // Collapsible sections using event delegation
+        const collapsibleParent = document.getElementById('collapsible-section-parent');
+        collapsibleParent.addEventListener('click', (event) => {
+            const header = event.target.closest('.collapsible-header');
+            if (!header) return;
+
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.arrow');
+
+            // Toggle classes for content visibility and fade
+            content.classList.toggle('open');
+            if (arrow) {
+                arrow.classList.toggle('rotate-180');
+            }
+        });
+        
+        // Navigation active state on scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileNavLinks = document.querySelectorAll('#mobile-nav-overlay a');
+
+        function changeNav(targetId) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${targetId}`) {
+                    link.classList.add('active');
+                }
+            });
+            mobileNavLinks.forEach(link => {
+                 link.classList.remove('bg-slate-200', 'font-semibold');
+                if (link.getAttribute('href') === `#${targetId}`) {
+                    link.classList.add('bg-slate-200', 'font-semibold');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                // Adjust offset for sticky header/sidebar
+                const offset = window.innerHeight * 0.3; // Trigger when 30% of section is visible
+                if (pageYOffset >= (sectionTop - offset)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            if (current) {
+                 changeNav(current);
+            }
+        });
+
+        // Chart.js - Illustrative Malware Distribution
+        const malwareCtx = document.getElementById('malwareChart');
+        if (malwareCtx) {
+            new Chart(malwareCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ransomware', 'Spyware', 'Trojan', 'Virus', 'Worm'],
+                    datasets: [{
+                        label: 'Phân Bố Phần Mềm Độc Hại (Minh Họa)',
+                        data: [30, 10, 25, 20, 15],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)', // red-500
+                            'rgba(245, 158, 11, 0.7)', // amber-500
+                            'rgba(168, 85, 247, 0.7)', // purple-400
+                            'rgba(59, 130, 246, 0.7)',  // blue-500
+                            'rgba(16, 185, 129, 0.7)' // emerald-500
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(168, 85, 247, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 12 },
+                                boxWidth: 15,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart.js - Illustrative Consequences Severity
+        const consequencesCtx = document.getElementById('consequencesChart');
+        if (consequencesCtx) {
+             new Chart(consequencesCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Thiệt hại tài chính', 'Gián đoạn hoạt động', 'Mất uy tín & lòng tin', 'Rò rỉ thông tin nhạy cảm', 'Hậu quả pháp lý & quy định'],
+                    datasets: [{
+                        label: 'Mức Độ Hậu Quả (Thang điểm 1-10)',
+                        data: [8, 9, 10, 7, 6],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)', // red-500
+                            'rgba(249, 115, 22, 0.7)', // orange-500
+                            'rgba(217, 119, 6, 0.7)', // amber-600
+                            'rgba(161, 98, 7, 0.7)', // amber-800
+                            'rgba(120, 53, 15, 0.7)' // orange-900
+                        ],
+                        borderColor: [
+                             'rgba(239, 68, 68, 1)', 
+                            'rgba(249, 115, 22, 1)',
+                            'rgba(217, 119, 6, 1)',
+                            'rgba(161, 98, 7, 1)',
+                            'rgba(120, 53, 15, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: { font: { size: 12 } }
+                        },
+                        y: {
+                           ticks: { font: { size: 12 },
+                                callback: function(value, index, values) {
+                                    const label = this.getLabelForValue(value);
+                                    // Wrap labels if too long
+                                    if (label.length > 20) {
+                                        return label.split(' ').reduce((acc, word) => {
+                                            if (acc.length === 0 || (acc[acc.length - 1] + ' ' + word).length > 20) {
+                                                acc.push(word);
+                                            } else {
+                                                acc[acc.length - 1] += ' ' + word;
+                                            }
+                                            return acc;
+                                        }, []);
+                                    }
+                                    return label;
+                                }
+                           }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                         tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x + '/10';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
